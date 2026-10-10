@@ -14,7 +14,7 @@
     var dark = root.getAttribute('data-theme') === 'dark';
     themeBtn.setAttribute('aria-label', dark ? 'Activer le mode clair' : 'Activer le mode sombre');
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', dark ? '#100b1c' : '#8b5cf6');
+    if (meta) meta.setAttribute('content', dark ? '#0f0e13' : '#fcfcfd');
   }
 
   themeBtn.addEventListener('click', function () {

@@ -8,13 +8,11 @@
 (function () {
   'use strict';
 
-  // Couleurs des ailes (dégradé de la couleur 1 vers la couleur 2)
+  // Couleurs des ailes (dégradé de la couleur 1 vers la couleur 2) : nuances de violet
   var PALETTES = [
-    ['#c4b5fd', '#f9a8d4'], // lilas → rose
-    ['#f0abfc', '#a78bfa'], // orchidée → violet
-    ['#fbcfe8', '#c4b5fd'], // rose pâle → lavande
-    ['#a78bfa', '#f472b6'], // violet → rose vif
-    ['#e9d5ff', '#f9a8d4']  // lavande → rose
+    ['#c4b5fd', '#8b5cf6'],
+    ['#ddd6fe', '#a78bfa'],
+    ['#a78bfa', '#7c3aed']
   ];
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -81,7 +79,7 @@
   var H = window.innerHeight;
   var mouse = { x: -9999, y: -9999 };
   var flyers = [];
-  var MAX = 14;
+  var MAX = 6;
 
   function angleDiff(a, b) {
     var d = a - b;
@@ -141,7 +139,7 @@
       'translate3d(' + (this.x - this.size / 2).toFixed(1) + 'px,' + (this.y - this.size / 3 + bob).toFixed(1) + 'px,0) rotate(' + deg.toFixed(1) + 'deg)';
   };
 
-  var count = W < 600 ? 3 : W < 1100 ? 5 : 7;
+  var count = W < 600 ? 1 : W < 1100 ? 2 : 3;
   for (var i = 0; i < count; i++) flyers.push(new Flyer());
 
   var last = performance.now();
@@ -154,18 +152,19 @@
   requestAnimationFrame(loop);
 
   window.addEventListener('resize', function () { W = window.innerWidth; H = window.innerHeight; });
-  window.addEventListener('pointermove', function (e) { mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
+  window.addEventListener('pointermove', function (e) { mouse.x = e.pageX; mouse.y = e.pageY; }, { passive: true });
   document.addEventListener('mouseout', function (e) { if (!e.relatedTarget) mouse.x = mouse.y = -9999; });
 
   // Clic sur une zone vide → un nouveau papillon s'envole
   document.addEventListener('click', function (e) {
     if (e.target.closest('a, button, input, textarea, label, select, .card')) return;
+    if (e.pageY > H) return; // seulement dans le haut de la page
     var f;
     if (flyers.length >= MAX) {
       f = flyers.shift();
       f.el.remove();
     }
-    f = new Flyer(e.clientX, e.clientY);
+    f = new Flyer(e.pageX, e.pageY);
     f.opacity = 0.3;
     f.speed = 4;
     f.angle = -Math.PI / 2 + rand(-0.8, 0.8); // s'envole vers le haut
